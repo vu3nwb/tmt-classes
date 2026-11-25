@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1b4332">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>TMT CLASSES — Botany AI Teaching Studio</title>
+  <link rel="manifest" href="./manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --primary: #1b4332;
+      --primary-light: #2d6a4f;
+      --accent: #d97706;
+      --blue: #1d4ed8;
+      --whatsapp: #16a34a;
+      --purple: #6d28d9;
+      --bg: #f8faf9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 80px; }
+    header {
+      background: var(--primary); color: #fff; padding: 14px 20px;
+      position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-wrap: wrap; gap: 12px;
+    }
+    header h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+    header p { margin: 2px 0 0; font-size: 0.8rem; color: #d8f3dc; }
+    .brand-center {
+      font-size: 1.85rem; font-weight: 800; letter-spacing: 2px; color: #ffffff; text-align: center;
+    }
+    .btn {
+      border: none; border-radius: 8px; padding: 9px 13px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: opacity 0.2s; text-decoration: none;
+    }
+    .btn:active { opacity: 0.8; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-whatsapp { background: var(--whatsapp); color: #fff; }
+    .btn-purple { background: var(--purple); color: #fff; }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .container { max-width: 1180px; margin: 0 auto; padding: 16px; }
+    .toolbar {
+      background: var(--card); padding: 14px; border-radius: 12px; border: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .toolbar input[type="date"], .toolbar select {
+      padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.88rem; background: #fff;
+    }
+    .grid { display: grid; grid-template-columns: 320px 1fr; gap: 16px; }
+    @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+    .session-list { display: flex; flex-direction: column; gap: 10px; }
+    .session-card {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 14px; cursor: pointer; transition: all 0.15s;
+    }
+    .session-card.active { border-color: var(--primary); background: #f0fdf4; }
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem;
+      font-weight: 700; background: #d8f3dc; color: var(--primary); margin-bottom: 6px;
+    }
+    .badge-info { background: #dbeafe; color: #1e40af; margin-left: 4px; }
+    .workspace {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+      min-height: 500px;
+    }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab { padding: 8px 13px; border-radius: 8px; background: #f1f5f9; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    .tab.active { background: var(--primary); color: #fff; }
+    .ai-box {
+      background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 14px; margin-bottom: 16px;
+    }
+    .ai-box textarea {
+      width: 100%; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px; font-size: 0.9rem;
+      resize: vertical; min-height: 60px; margin-top: 8px;
+    }
+    #editorArea {
+      width: 100%; min-height: 380px; padding: 14px; border-radius: 10px; border: 1px solid var(--border);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; line-height: 1.5;
+    }
+    #previewArea, #studentPreviewArea { line-height: 1.65; font-size: 0.96rem; }
+    #previewArea table, #studentPreviewArea table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    #previewArea th, #previewArea td, #studentPreviewArea th, #studentPreviewArea td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+    #previewArea th, #studentPreviewArea th { background: #f1f5f9; }
+    .slide-preview-card {
+      border: 1px solid var(--border); border-left: 5px solid var(--primary);
+      border-radius: 10px; padding: 14px; margin-bottom: 12px; background: #fafafa;
+    }
+    .action-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #f8fafc;
+      border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px;
+    }
+    .loader {
+      display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.58);
+      z-index: 999; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 1.05rem; text-align: center; padding: 20px;
+    }
+    #installBanner {
+      display: none; background: #ecfdf5; border: 1px solid #6ee7b7; padding: 10px 16px;
+      border-radius: 10px; margin-bottom: 14px; justify-content: space-between; align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader">Processing with AI... Please wait</div>
+
+  <header>
+    <div>
+      <h1>🌿 Botany AI Teaching Studio</h1>
+      <p>St. Thomas College (Autonomous), Thrissur</p>
+    </div>
+    <div class="brand-center">TMT CLASSES</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="configureApiUrl()">⚙️ API URL</button>
+      <button class="btn btn-accent" onclick="setupTrigger()">⏰ Enable 1 PM Auto-Sync</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="installBanner">
+      <span>📲 Install TMT CLASSES on your Tablet or Mobile home screen.</span>
+      <button class="btn btn-primary" id="installBtn">Install App</button>
+    </div>
+
+    <div class="toolbar">
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <label style="font-weight:600; font-size:0.86rem;">Date:</label>
+        <input type="date" id="targetDate">
+        <label style="font-weight:600; font-size:0.86rem;">AI Engine:</label>
+        <select id="providerSelect">
+          <option value="auto">Auto (Gemini → ChatGPT)</option>
+          <option value="gemini">Gemini Only</option>
+          <option value="openai">ChatGPT Only</option>
+        </select>
+        <button class="btn btn-primary" onclick="generateNotesNow()">📝 Generate Note</button>
+        <button class="btn btn-accent" onclick="generateSlidesNow()">🎞️ Generate Slides</button>
+        <button class="btn btn-blue" onclick="generateStudentPdfNow()">📚 Student Study PDF</button>
+      </div>
+      <button class="btn btn-outline" onclick="loadDashboard()">🔄 Refresh</button>
+    </div>
+
+    <div class="grid">
+      <div>
+        <h3 style="margin-top:0; font-size:1rem;">Scheduled Classes</h3>
+        <div class="session-list" id="sessionList">Loading saved classes...</div>
+      </div>
+
+      <div class="workspace" id="workspace">
+        <p style="color:var(--muted);">Select a class on the left or choose a date above and click <strong>Generate Note</strong>. Then generate <strong>Slides</strong>, <strong>Student Study PDF</strong>, or export to <strong>NotebookLM</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (or set via ⚙️ API URL button)
+    // =========================================================================
+    const DEFAULT_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+    let allRecords = [];
+    let currentRecord = null;
+    let currentMode = 'preview';
+    let deferredPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner').style.display = 'flex';
+    });
+
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBanner').style.display = 'none';
+    });
+
+    function getApiUrl() {
+      const saved = localStorage.getItem('tmt_api_url');
+      if (saved && saved.startsWith('https://')) return saved;
+      if (DEFAULT_API_URL && DEFAULT_API_URL.startsWith('https://')) return DEFAULT_API_URL;
+      return '';
+    }
+
+    function configureApiUrl() {
+      const current = getApiUrl();
+      const entered = prompt('Paste your Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec):', current);
+      if (entered && entered.trim().startsWith('https://')) {
+        localStorage.setItem('tmt_api_url', entered.trim());
+        alert('API URL saved! Loading your classes...');
+        loadDashboard();
+      } else if (entered !== null) {
+        alert('Please enter a valid https:// Apps Script Web App URL.');
+      }
+    }
+
+    async function callBackend(action, payload) {
+      const url = getApiUrl();
+      if (!url) {
+        configureApiUrl();
+        throw new Error('Apps Script Web App URL is not set yet. Click "⚙️ API URL" in the header to paste it.');
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, payload: payload || {} })
+      });
+      const json = await res.json();
+      if (!json.ok) {
+        throw new Error(json.error || 'Backend error occurred.');
+      }
+      return json.data;
+    }
+
+    window.onload = () => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      document.getElementById('targetDate').value = tomorrow.toISOString().split('T')[0];
+      if (getApiUrl()) {
+        loadDashboard();
+      } else {
+        document.getElementById('sessionList').innerHTML =
+          '<div class="session-card">Click <strong>⚙️ API URL</strong> at the top right and paste your Google Apps Script Web App URL to connect.</div>';
+      }
+    };
+
+    function getProviderMode() {
+      return document.getElementById('providerSelect').value || 'auto';
+    }
+
+    function setLoading(show, msg) {
+      const el = document.getElementById('loader');
+      el.textContent = msg || 'Processing with AI... Please wait';
+      el.style.display = show ? 'flex' : 'none';
+    }
+
+    async function loadDashboard() {
+      setLoading(true, 'Loading saved classes...');
+      try {
+        const res = await callBackend('getDashboardData');
+        allRecords = res.records || [];
+        renderList();
+        if (allRecords.length > 0 && !currentRecord) {
+          selectRecord(allRecords[0].id);
+        } else if (currentRecord) {
+          const refreshed = allRecords.find(r => r.id === currentRecord.id);
+          if (refreshed) selectRecord(refreshed.id);
+        }
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderList() {
+      const list = document.getElementById('sessionList');
+      if (!allRecords.length) {
+        list.innerHTML = '<div class="session-card">No generated classes yet. Click "Generate Note" above.</div>';
+        return;
+      }
+      list.innerHTML = allRecords.map(r => `
+        <div class="session-card ${currentRecord && currentRecord.id === r.id ? 'active' : ''}" onclick="selectRecord('${r.id}')">
+          <div class="badge">${r.classDate} • ${r.timeSlot}</div>
+          <div style="font-weight:700; font-size:0.96rem;">${r.courseTitle}</div>
+          <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">${r.topicDescription}</div>
+          <div style="margin-top:6px; font-size:0.74rem; color:#475569;">
+            ${r.slidesGenerated ? '🎞️ Slides Ready ' : ''}
+            ${r.studentPdfGenerated ? '📚 Study PDF Ready' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectRecord(id) {
+      currentRecord = allRecords.find(r => r.id === id);
+      renderList();
+      renderWorkspace();
+    }
+
+    function shareToWhatsApp() {
+      if (!currentRecord || !currentRecord.studentPdfUrl) {
+        return alert('Please generate the Student Study PDF first.');
+      }
+      const msg = [
+        '📚 *Study Material — ' + currentRecord.courseTitle + '*',
+        '📅 Date: ' + currentRecord.classDate + ' (' + currentRecord.timeSlot + ')',
+        '📖 Topic: ' + currentRecord.topicDescription,
+        '',
+        'Download/View PDF Notes:',
+        currentRecord.studentPdfUrl
+      ].join('\n');
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    function renderWorkspace() {
+      if (!currentRecord) return;
+      const ws = document.getElementById('workspace');
+      const slidesHtml = (currentRecord.slidesData || []).map((s, i) => `
+        <div class="slide-preview-card">
+          <strong>Slide ${i + 2}: ${s.title}</strong>
+          <div style="font-size:0.84rem; color:var(--muted); margin-bottom:6px;">${s.subtitle || ''}</div>
+          <ul style="margin:0; padding-left:18px; font-size:0.88rem;">
+            ${(s.bullets || []).map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+
+      const slideBtns = currentRecord.slidesGenerated && currentRecord.pptxDownloadUrl
+        ? `<a class="btn btn-primary" href="${currentRecord.pptxDownloadUrl}" target="_blank">📥 Download PPTX</a>
+           <a class="btn btn-outline" href="${currentRecord.presentationUrl}" target="_blank">🖥️ Open Slides</a>`
+        : `<button class="btn btn-accent" onclick="generateSlidesNow()">🎞️ Generate Slides</button>`;
+
+      const pdfBtns = currentRecord.studentPdfGenerated && currentRecord.studentPdfUrl
+        ? `<a class="btn btn-blue" href="${currentRecord.studentPdfUrl}" target="_blank">📄 View Study PDF</a>
+           <button class="btn btn-whatsapp" onclick="shareToWhatsApp()">📲 Share PDF on WhatsApp</button>`
+        : `<button class="btn btn-blue" onclick="generateStudentPdfNow()">📚 Generate Student Study PDF</button>`;
+
+      ws.innerHTML = `
+        <div style="margin-bottom:12px;">
+          <span class="badge">${currentRecord.classDate} | ${currentRecord.timeSlot}</span>
+          ${currentRecord.lastProvider ? `<span class="badge badge-info">AI: ${currentRecord.lastProvider}</span>` : ''}
+          <h2 style="margin:4px 0; font-size:1.22rem;">${currentRecord.courseTitle}</h2>
+          <div style="font-size:0.88rem; color:var(--muted);">${currentRecord.topicDescription}</div>
+        </div>
+
+        <div class="action-bar">
+          ${slideBtns}
+          ${pdfBtns}
+          <button class="btn btn-purple" onclick="exportNotebookLMNow()">📓 Export to NotebookLM</button>
+        </div>
+
+        <div class="ai-box">
+          <strong style="font-size:0.9rem; color:#92400e;">✨ Refine Teaching Note with AI Prompt</strong>
+          <textarea id="aiPromptInput" placeholder="e.g., Add a comparative table on Kerala medicinal plants, simplify explanations, or add 2 more essay questions..."></textarea>
+          <div style="margin-top:8px; display:flex; justify-content:flex-end;">
+            <button class="btn btn-accent" onclick="runAiRefinement()">🚀 Apply AI Prompt to Note</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab ${currentMode === 'preview' ? 'active' : ''}" onclick="switchTab('preview')">📖 Teaching Note</button>
+          <button class="tab ${currentMode === 'edit' ? 'active' : ''}" onclick="switchTab('edit')">✏️ Edit Note</button>
+          <button class="tab ${currentMode === 'slides' ? 'active' : ''}" onclick="switchTab('slides')">🎞️ Slides (${(currentRecord.slidesData || []).length ? (currentRecord.slidesData.length + 1) : '0'})</button>
+          <button class="tab ${currentMode === 'student' ? 'active' : ''}" onclick="switchTab('student')">📚 Student Study Note</button>
+        </div>
+
+        <div id="previewArea" style="display:${currentMode === 'preview' ? 'block' : 'none'};">
+          ${marked.parse(currentRecord.teachingNoteMarkdown || '')}
+        </div>
+
+        <div id="editContainer" style="display:${currentMode === 'edit' ? 'block' : 'none'};">
+          <textarea id="editorArea">${currentRecord.teachingNoteMarkdown || ''}</textarea>
+          <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+            <button class="btn btn-primary" onclick="saveManualEdit()">💾 Save Changes to Drive</button>
+          </div>
+        </div>
+
+        <div id="slidesContainer" style="display:${currentMode === 'slides' ? 'block' : 'none'};">
+          ${slidesHtml || '<p style="color:var(--muted);">Slides not generated yet. Click "Generate Slides" above.</p>'}
+        </div>
+
+        <div id="studentPreviewArea" style="display:${currentMode === 'student' ? 'block' : 'none'};">
+          ${currentRecord.studentNoteMarkdown
+            ? marked.parse(currentRecord.studentNoteMarkdown)
+            : '<p style="color:var(--muted);">Student Study Material PDF not generated yet. Click "Generate Student Study PDF" above.</p>'}
+        </div>
+      `;
+    }
+
+    function switchTab(mode) {
+      currentMode = mode;
+      renderWorkspace();
+    }
+
+    async function generateNotesNow() {
+      const dateVal = document.getElementById('targetDate').value;
+      if (!dateVal) return alert('Select a date first.');
+      setLoading(true, 'Generating 45–50 min Teaching Note...');
+      try {
+        const res = await callBackend('generateNotesForDate', { dateStr: dateVal, providerMode: getProviderMode() });
+        alert(res.message || 'Teaching Note generated!');
+        if (res.created && res.created[0]) currentRecord = res.created[0];
+        await loadDashboard();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function generateSlidesNow() {
+      const dateVal = document.getElementById('targetDate').value;
+      const recId = currentRecord ? currentRecord.id : '';
+      setLoading(true, 'Generating 6–7 Widescreen Slides (PPTX)...');
+      try {
+        const updated = await callBackend('generateSlidesForSession', { recordId: recId, dateStr: dateVal, providerMode: getProviderMode() });
+        updateLocalRecord(updated);
+        alert('Widescreen presentation slides generated via ' + (updated.lastProvider || 'AI') + '!');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function generateStudentPdfNow() {
+      const dateVal = document.getElementById('targetDate').value;
+      const recId = currentRecord ? currentRecord.id : '';
+      setLoading(true, 'Generating Student Study PDF (Simple English + Tables + Images)...');
+      try {
+        const updated = await callBackend('generateStudentStudyPdf', { recordId: recId, dateStr: dateVal, providerMode: getProviderMode() });
+        updateLocalRecord(updated);
+        currentMode = 'student';
+        renderWorkspace();
+        alert('Student Study PDF is ready! Click "Share PDF on WhatsApp" to send it to your students.');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function exportNotebookLMNow() {
+      const dateVal = document.getElementById('targetDate').value;
+      const recId = currentRecord ? currentRecord.id : '';
+      setLoading(true, 'Creating Google Doc source for NotebookLM...');
+      try {
+        const res = await callBackend('exportToNotebookLM', { recordId: recId, dateStr: dateVal });
+        if (res.record) updateLocalRecord(res.record);
+        window.open(res.notebookLmUrl, '_blank');
+        alert('Google Doc saved in Drive (NotebookLM_Sources):\n\n' + res.docName + '\n\nIn NotebookLM, click "Add source -> Google Drive" and select this document!');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function runAiRefinement() {
+      const promptText = document.getElementById('aiPromptInput').value.trim();
+      if (!promptText) return alert('Enter an instruction for AI.');
+      setLoading(true, 'Refining Teaching Note with AI...');
+      try {
+        const updated = await callBackend('refineSessionWithAI', { recordId: currentRecord.id, userPrompt: promptText, providerMode: getProviderMode() });
+        updateLocalRecord(updated);
+        alert('Teaching note updated via ' + (updated.lastProvider || 'AI') + '!');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function saveManualEdit() {
+      const updatedMd = document.getElementById('editorArea').value;
+      setLoading(true, 'Saving changes to Drive...');
+      try {
+        const updated = await callBackend('saveEditedSession', { recordId: currentRecord.id, updatedMarkdown: updatedMd });
+        updateLocalRecord(updated);
+        currentMode = 'preview';
+        renderWorkspace();
+        alert('Changes saved successfully!');
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function updateLocalRecord(updated) {
+      const idx = allRecords.findIndex(r => r.id === updated.id);
+      if (idx !== -1) allRecords[idx] = updated;
+      else allRecords.unshift(updated);
+      currentRecord = updated;
+      renderList();
+      renderWorkspace();
+    }
+
+    async function setupTrigger() {
+      setLoading(true, 'Setting up 1:00 PM Auto-Sync trigger...');
+      try {
+        const msg = await callBackend('setupDailyTrigger');
+        alert(msg);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  </script>
+</body>
+</html>
